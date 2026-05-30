@@ -1,0 +1,6 @@
+{
+  "name": "RoadSoS",
+  "description": "Voice-First AI Emergency Triage, IoT Crash Detection, Automated Dispatch, and Smart Ambulance Integration for India's road accidents.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

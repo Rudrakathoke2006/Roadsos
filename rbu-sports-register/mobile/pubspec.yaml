@@ -1,0 +1,22 @@
+name: rbu_sports_mobile
+description: A new Flutter project for the RBU Sports Facility Usage & Issuance Register.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  dio: ^5.4.0
+  mobile_scanner: ^3.5.6
+  flutter_secure_storage: ^9.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

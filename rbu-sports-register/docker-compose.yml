@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: rbu_sports_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rbu_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rbu_secure_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-rbu_sports}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rbu_admin} -d ${POSTGRES_DB:-rbu_sports}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rbu_sports_backend
+    restart: always
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      QR_TOKEN_EXPIRE_MINUTES: ${QR_TOKEN_EXPIRE_MINUTES}
+      FRONTEND_URL: ${FRONTEND_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rbu_sports_frontend
+    restart: always
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+
+  nginx:
+    image: nginx:alpine
+    container_name: rbu_sports_proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  pgdata:
